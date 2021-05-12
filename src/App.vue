@@ -1,27 +1,30 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png" />
-  <HelloWorld msg="Hello Vue 3 + TypeScript + Vite" />
+  <div class="container">
+    <Header :user="userInfo" />
+    <router-view></router-view>
+    <Footer />
+  </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import HelloWorld from './components/HelloWorld.vue'
+import { defineComponent, ref } from 'vue'
+import 'bootstrap/dist/css/bootstrap.min.css'
+import Header from '@/components/GlobalHeader.vue'
+import Footer from '@/components/GlobalFooter.vue'
+import { useStore } from 'vuex'
+import { CurrentUserProps } from './store'
 
 export default defineComponent({
   name: 'App',
-  components: {
-    HelloWorld
+  components: { Header, Footer },
+  setup() {
+    const store = useStore()
+    const userInfo = ref<CurrentUserProps>(store.state.user)
+    return {
+      userInfo
+    }
   }
 })
 </script>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
+<style></style>

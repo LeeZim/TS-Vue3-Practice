@@ -1,6 +1,6 @@
 import Axios from 'axios'
 
-const baseUrl = 'http://api.vikingship.xyz/api/'
+const baseUrl = 'https://apis.imooc.com/api/'
 
 const axios = Axios.create({
   baseURL: baseUrl,
@@ -9,10 +9,17 @@ const axios = Axios.create({
 
 axios.interceptors.request.use(
   (config) => {
+    if (config.method === 'get') {
+      config.params = {
+        ...config.params,
+        icode: '0370D0ADAC459408'
+      }
+    }
     return config
   },
   (error) => {
-    return Promise.resolve(error)
+    console.log('error')
+    return Promise.reject(error)
   }
 )
 
@@ -21,6 +28,8 @@ axios.interceptors.response.use(
     return config
   },
   (error) => {
-    return Promise.resolve(error)
+    return Promise.reject(error)
   }
 )
+
+export default axios

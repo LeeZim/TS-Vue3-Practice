@@ -4,7 +4,7 @@
       <div class="col-6">
         <img src="/src/assets/loginLogo.png" class="h-120" />
       </div>
-      <div class="h-120 shadow-sm card col-6 py-5 mb-4 d-grid gap-4">
+      <ValidForm class="h-120 shadow-sm card col-6 py-5 mb-4 d-grid gap-4">
         <ValidInput :rules="mailValidRule" placeholder="请输入邮箱" :label="'邮箱地址：'" />
         <ValidInput
           :rules="pwdValidRule"
@@ -12,8 +12,12 @@
           type="password"
           :label="'密码：'"
         />
-        <button class="btn btn-primary w-50 mx-auto" @click="onFormCommit">登录</button>
-      </div>
+        <template #defaultBtn>
+          <!-- <button class="btn btn-primary w-50 mx-auto" style="height: 40px" @click="onFormCommit">
+            登录
+          </button> -->
+        </template>
+      </ValidForm>
     </div>
   </div>
 </template>
@@ -21,6 +25,7 @@
 import { defineComponent } from 'vue'
 import { useStore } from 'vuex'
 import ValidInput, { RuleProps } from '../components/ValidInput.vue'
+import ValidForm from '../components/ValidForm.vue'
 
 export default defineComponent({
   name: 'Login',
@@ -45,7 +50,8 @@ export default defineComponent({
     }
   },
   components: {
-    ValidInput
+    ValidInput,
+    ValidForm
   }
 })
 </script>

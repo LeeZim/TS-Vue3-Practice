@@ -12,7 +12,7 @@ export interface AvatarProps {
   createdAt?: string
 }
 
-export interface ColumnsProps {
+export interface ColumnProps {
   _id: string
   title: string
   description?: string
@@ -21,21 +21,22 @@ export interface ColumnsProps {
   createdAt?: string
 }
 
-export interface DataProps {
-  count: number
+export interface ColumnsProps {
+  count?: number
   pageSize: number
   currentPage: number
-  list: ColumnsProps[]
+  list: ColumnProps[]
+  isEnd: boolean
 }
 
 export interface GlobalStateProps {
   user: CurrentUserProps
-  columns: ColumnsProps[]
+  columns: ColumnsProps
 }
 
 const defaultState: GlobalStateProps = {
   user: { isLogin: false, nickName: '某某某' },
-  columns: []
+  columns: { pageSize: 3, currentPage: 1, list: [], isEnd: false }
 }
 
 const store = createStore({
@@ -49,13 +50,28 @@ const store = createStore({
     userLogout(state: GlobalStateProps) {
       state.user.isLogin = false
     },
-    getColumns(state: GlobalStateProps, rawData: DataProps) {
-      state.columns = rawData.list
+    getColumns(state: GlobalStateProps, rawData: ColumnsProps) {
+      if (!state.columns.list) {
+        state.columns.list = rawData.list
+      } else {
+        state.columns.list = state.columns.list.concat(rawData.list)
+        console.log('length:', state.columns.list.length)
+        if (rawData.count && state.columns.list.length >= rawData.count) {
+          state.columns.isEnd = true
+        }
+      }
+    },
+    getMoreColumns(state: GlobalStateProps) {
+      state.columns.currentPage += 1
     }
   },
   actions: {
-    fetchColumns({ commit }) {
-      return getAndCommit('getColumns', '/columns', commit)
+    fetchColumns({ state, commit }) {
+      return getAndCommit(
+        'getColumns',
+        `/columns?currentPage=${state.columns.currentPage}&pageSize=${state.columns.pageSize}`,
+        commit
+      )
     }
   },
   getters: {}

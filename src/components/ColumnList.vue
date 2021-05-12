@@ -15,17 +15,17 @@
 <script lang="ts">
 import { computed, defineComponent, onMounted } from 'vue'
 import { useStore } from 'vuex'
-import { ColumnsProps, GlobalStateProps } from '../store'
+import { ColumnProps, GlobalStateProps } from '../store'
 
 export default defineComponent({
   setup() {
     const store = useStore<GlobalStateProps>()
-    const list = computed<ColumnsProps[]>(() => store.state.columns)
+    const list = computed<ColumnProps[]>(() => store.state.columns.list)
     // 数据预处理，如果没有头像，则设置默认图标
-    const columnsList = computed<ColumnsProps[]>(() => {
+    const columnsList = computed<ColumnProps[]>(() => {
       return (
         list.value &&
-        list.value.map((column: ColumnsProps) => {
+        list.value.map((column: ColumnProps) => {
           if (column.avatar && !column.avatar.url) {
             column.avatar = { ...column.avatar, url: '/src/assets/DefaultIcon.jpg' }
           }

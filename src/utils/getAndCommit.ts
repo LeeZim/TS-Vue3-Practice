@@ -1,9 +1,9 @@
 import { Commit } from 'vuex'
 import axios from './axios'
-import { DataProps } from '../store'
+import { ColumnsProps } from '../store'
 
 const getAndCommit = async (mutitionName: string, apiUrl: string, commit: Commit) => {
-  const { data } = await axios.get<{ data: DataProps }>(apiUrl)
+  const { data } = await axios.get<{ data: ColumnsProps }>(apiUrl)
   commit(mutitionName, data.data)
   return data
 }

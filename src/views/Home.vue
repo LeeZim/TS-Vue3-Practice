@@ -14,17 +14,37 @@
     <h4 class="font-weight-bold text-center">发现精彩</h4>
     <ColumnList />
     <div class="d-grid col-6 mx-auto">
-      <button class="btn btn-outline-primary mt-2 mb-5 mx-auto w-25">点击加载更多</button>
+      <button
+        v-if="!isEnd"
+        class="btn btn-outline-primary mt-2 mb-5 mx-auto w-25"
+        @click="getMoreColumns"
+      >
+        点击加载更多
+      </button>
+      <span v-else class="mx-auto w-25 text-center" style="color: gray">到底啦</span>
     </div>
   </div>
 </template>
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { computed, defineComponent } from 'vue'
 import ColumnList from '@/components/ColumnList.vue'
+import { useStore } from 'vuex'
+import { GlobalStateProps } from '../store'
 
 export default defineComponent({
   name: 'Home',
-  setup() {},
+  setup() {
+    const store = useStore<GlobalStateProps>()
+    const isEnd = computed(() => store.state.columns.isEnd)
+    const getMoreColumns = () => {
+      store.commit('getMoreColumns')
+      store.dispatch('fetchColumns')
+    }
+    return {
+      getMoreColumns,
+      isEnd
+    }
+  },
   components: {
     ColumnList
   }

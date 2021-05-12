@@ -2,12 +2,17 @@
   <div class="col-md-10 mx-auto">
     <label v-if="label" class="form-label">{{ label }}</label>
     <input
-      type="text"
+      v-if="tag === 'text'"
       class="form-control"
-      :class="{
-        ' is-invalid': isValid && isValid === 'false',
-        ' is-valid': isValid && isValid === 'true'
-      }"
+      :class="validRef.error"
+      v-bind="$attrs"
+      v-model="validRef.value"
+      @blur="loseFocus"
+    />
+    <textarea
+      v-else
+      class="form-control"
+      :class="validRef.error"
       v-bind="$attrs"
       v-model="validRef.value"
       @blur="loseFocus"
@@ -19,13 +24,26 @@
 import { defineComponent, PropType, reactive, ref } from 'vue'
 
 export interface RuleProps {
-  rule: 'email' | 'password' | 'custom'
+  rule: 'required' | 'email' | 'password' | 'custom'
+  min?: number
   message?: string
   func?: () => boolean
 }
-type TypeTag = 'text' | 'textarea'
-// const emailReg = /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
 
+type validErrorProps = { 'is-valid': true } | { 'is-invalid': true } | null
+
+const isValidClass: { [key: string]: validErrorProps } = {
+  valid: { 'is-valid': true },
+  invalid: { 'is-invalid': true }
+}
+
+interface ValidRefProps {
+  value: string
+  error?: validErrorProps
+  errorMsg?: string
+}
+type TypeTag = 'text' | 'textarea'
+const emailReg = /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
 export default defineComponent({
   props: {
     rules: Array as PropType<RuleProps[]>,
@@ -39,20 +57,47 @@ export default defineComponent({
     }
   },
   inheritAttrs: false,
-  setup() {
+  setup(props) {
     const isValid = ref()
     const msg = ref('参数错误')
-    const validRef = reactive({
+    const validRef = reactive<ValidRefProps>({
       value: '',
-      error: false,
-      errorMsg: ''
+      error: null,
+      errorMsg: '参数错误'
     })
     const loseFocus = () => {
-      if (validRef.value) {
-        isValid.value = 'true'
-      } else {
-        isValid.value = 'false'
-        validRef.errorMsg = '邮箱不能为空'
+      if (props.rules) {
+        const allPassed = props.rules.every((rule: RuleProps) => {
+          let passed = true
+          if (rule.rule) {
+            validRef.errorMsg = rule.message
+            switch (rule.rule) {
+              case 'required':
+                passed = validRef.value.trim() !== ''
+                break
+              case 'email':
+                if (validRef.value !== '') {
+                  passed = emailReg.test(validRef.value)
+                }
+                break
+              case 'password':
+                if (validRef.value !== '') {
+                  passed = validRef.value.length >= (rule.min ? rule.min : 6)
+                  if (!passed) {
+                    validRef.errorMsg = `密码不能少于${rule.min ? rule.min : 6}位`
+                  }
+                }
+                break
+              case 'custom':
+                passed = rule.func ? rule.func() : true
+                break
+              default:
+                break
+            }
+          }
+          return passed
+        })
+        validRef.error = allPassed ? isValidClass.valid : isValidClass.invalid
       }
     }
     return {

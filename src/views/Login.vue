@@ -5,9 +5,9 @@
         <img src="/src/assets/loginLogo.png" class="h-120" />
       </div>
       <div class="h-120 shadow-sm card col-6 py-5 mb-4 d-grid gap-4">
-        <ValidInput :rules="[{ rule: 'email' }]" placeholder="请输入邮箱" :label="'邮箱地址：'" />
+        <ValidInput :rules="mailValidRule" placeholder="请输入邮箱" :label="'邮箱地址：'" />
         <ValidInput
-          :rules="[{ rule: 'password' }]"
+          :rules="pwdValidRule"
           placeholder="请输入密码"
           type="password"
           :label="'密码：'"
@@ -20,7 +20,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { useStore } from 'vuex'
-import ValidInput from '../components/ValidInput.vue'
+import ValidInput, { RuleProps } from '../components/ValidInput.vue'
 
 export default defineComponent({
   name: 'Login',
@@ -29,8 +29,19 @@ export default defineComponent({
     const onFormCommit = () => {
       store.commit('userLogin')
     }
+    const mailValidRule: RuleProps[] = [
+      { rule: 'email', message: '请输入有效的邮箱地址' },
+      { rule: 'required', message: '邮箱地址不能为空' }
+    ]
+
+    const pwdValidRule: RuleProps[] = [
+      { rule: 'password', min: 6 },
+      { rule: 'required', message: '密码不能为空' }
+    ]
     return {
-      onFormCommit
+      onFormCommit,
+      mailValidRule,
+      pwdValidRule
     }
   },
   components: {

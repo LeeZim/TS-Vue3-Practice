@@ -55,7 +55,6 @@ const store = createStore({
         state.columns.list = rawData.list
       } else {
         state.columns.list = state.columns.list.concat(rawData.list)
-        console.log('length:', state.columns.list.length)
         if (rawData.count && state.columns.list.length >= rawData.count) {
           state.columns.isEnd = true
         }

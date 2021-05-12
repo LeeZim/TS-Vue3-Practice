@@ -13,13 +13,31 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, onUnmounted } from 'vue'
+import mitt from 'mitt'
+
+export const emitter = mitt()
+
+type funcArrProps = () => boolean
 
 export default defineComponent({
-  setup() {
+  emits: ['formCommit'],
+  setup(props, context) {
+    let funcArr: funcArrProps[] = []
     const onFormCommit = () => {
-      console.log('commit')
+      // console.log(funcArr)
+      const isValid = funcArr.map((func) => func()).every((result) => result)
+      context.emit('formCommit', isValid)
     }
+    const callback = (func: funcArrProps) => {
+      funcArr.push(func)
+      console.log(funcArr)
+    }
+    emitter.on('form-item-created', callback)
+    onUnmounted(() => {
+      emitter.off('form-item-created', callback)
+      funcArr = []
+    })
     return {
       onFormCommit
     }

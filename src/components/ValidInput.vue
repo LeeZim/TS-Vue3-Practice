@@ -21,7 +21,8 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, PropType, reactive, ref } from 'vue'
+import { defineComponent, onMounted, PropType, reactive, ref } from 'vue'
+import { emitter } from './ValidForm.vue'
 
 export interface RuleProps {
   rule: 'required' | 'email' | 'password' | 'custom'
@@ -67,7 +68,7 @@ export default defineComponent({
     })
     const loseFocus = () => {
       if (props.rules) {
-        const allPassed = props.rules.every((rule: RuleProps) => {
+        const allPassed: boolean = props.rules.every((rule: RuleProps) => {
           let passed = true
           if (rule.rule) {
             validRef.errorMsg = rule.message
@@ -98,8 +99,14 @@ export default defineComponent({
           return passed
         })
         validRef.error = allPassed ? isValidClass.valid : isValidClass.invalid
+        return allPassed
       }
+      return true
     }
+    onMounted(() => {
+      console.log('itemCreate')
+      emitter.emit('form-item-created', loseFocus)
+    })
     return {
       isValid,
       msg,

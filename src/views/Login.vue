@@ -4,7 +4,7 @@
       <div class="col-6">
         <img src="/src/assets/loginLogo.png" class="h-120" />
       </div>
-      <ValidForm class="h-120 shadow-sm card col-6 py-5 mb-4 d-grid gap-4">
+      <ValidForm class="h-120 shadow-sm card col-6 py-5 mb-4 d-grid gap-4" @formCommit="commitTest">
         <ValidInput :rules="mailValidRule" placeholder="请输入邮箱" :label="'邮箱地址：'" />
         <ValidInput
           :rules="pwdValidRule"
@@ -38,6 +38,9 @@ export default defineComponent({
       { rule: 'email', message: '请输入有效的邮箱地址' },
       { rule: 'required', message: '邮箱地址不能为空' }
     ]
+    const commitTest = (isValid: boolean) => {
+      console.log(isValid)
+    }
 
     const pwdValidRule: RuleProps[] = [
       { rule: 'password', min: 6 },
@@ -46,7 +49,8 @@ export default defineComponent({
     return {
       onFormCommit,
       mailValidRule,
-      pwdValidRule
+      pwdValidRule,
+      commitTest
     }
   },
   components: {

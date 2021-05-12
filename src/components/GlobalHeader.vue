@@ -14,9 +14,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, ref } from 'vue'
+import { computed, defineComponent, PropType } from 'vue'
+import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
-import { CurrentUserProps } from '../store'
+import { CurrentUserProps, GlobalStateProps } from '../store'
 
 export default defineComponent({
   name: 'Header',
@@ -26,20 +27,16 @@ export default defineComponent({
       required: true
     }
   },
-  setup(props) {
-    const store = useStore()
-    const userInfo = ref<CurrentUserProps>(props.user)
+  setup() {
+    const router = useRouter()
+    const store = useStore<GlobalStateProps>()
+    const userInfo = computed<CurrentUserProps>(() => store.state.user)
     const userLogin = () => {
-      store.commit('userLogin')
-      console.log(`login${userInfo.value.isLogin}`)
-    }
-    const userLogout = () => {
-      store.commit('userLogout')
+      router.push('/login')
     }
     return {
       userInfo,
-      userLogin,
-      userLogout
+      userLogin
     }
   }
 })

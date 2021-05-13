@@ -61,12 +61,18 @@ export default defineComponent({
             password: pwdVal.value
           }
         }
-        store.dispatch('loginAndFetch', payload).then(() => {
-          createMessage('登陆成功', 'success')
-          setTimeout(() => {
-            router.push('/')
-          }, 2500)
-        })
+        store
+          .dispatch('loginAndFetch', payload)
+          .then(() => {
+            createMessage('登陆成功', 'success')
+            setTimeout(() => {
+              router.push('/')
+            }, 2500)
+          })
+          .catch((error) => {
+            const errorMsg = error.response.data.error
+            createMessage(errorMsg, 'error')
+          })
       }
     }
     const mailValidRule: RuleProps[] = [

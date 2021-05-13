@@ -1,7 +1,7 @@
 <template>
   <div
-    class="alert w-25 position-absolute top-50 start-50 translate-middle"
-    :class="`alert-${type}`"
+    class="alert w-50 position-absolute top-50 start-50 translate-middle"
+    :class="alertType[type]"
   >
     <strong class="mx-auto">{{ message }}</strong>
   </div>
@@ -21,7 +21,16 @@ export default defineComponent({
       default: 'default'
     }
   },
-  setup() {}
+  setup() {
+    const alertType: { [key: string]: string } = {
+      success: 'alert-success',
+      error: 'alert-danger',
+      default: 'alert-info'
+    }
+    return {
+      alertType
+    }
+  }
 })
 </script>
 

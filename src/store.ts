@@ -35,6 +35,7 @@ export interface ColumnsProps {
   currentPage: number
   list: ColumnProps[]
   isEnd: boolean
+  loadedPage: number
 }
 
 export interface GlobalStateProps {
@@ -46,7 +47,7 @@ export interface GlobalStateProps {
 
 const defaultState: GlobalStateProps = {
   user: { isLogin: false, nickName: '某某某某', _id: '' },
-  columns: { pageSize: 3, currentPage: 1, list: [], isEnd: false },
+  columns: { pageSize: 3, currentPage: 1, list: [], isEnd: false, loadedPage: 0 },
   token: localStorage.getItem('token') || '',
   isLoading: false
 }
@@ -90,17 +91,24 @@ const store = createStore({
     getMoreColumns(state: GlobalStateProps) {
       state.columns.currentPage += 1
     },
+    setLoadedPage(state: GlobalStateProps, loadedPage: number) {
+      state.columns.loadedPage = loadedPage
+    },
     setLoader(state: GlobalStateProps, status: boolean) {
       state.isLoading = status
     }
   },
   actions: {
     fetchColumns({ state, commit }) {
-      return asyncAndCommit(
-        'getColumns',
-        `/columns?currentPage=${state.columns.currentPage}&pageSize=${state.columns.pageSize}`,
-        commit
-      )
+      if (state.columns.currentPage > state.columns.loadedPage) {
+        commit('setLoadedPage', state.columns.currentPage)
+        return asyncAndCommit(
+          'getColumns',
+          `/columns?currentPage=${state.columns.currentPage}&pageSize=${state.columns.pageSize}`,
+          commit
+        )
+      }
+      return Promise.resolve()
     },
     login({ commit }, payload: AxiosRequestConfig) {
       return asyncAndCommit('userLogin', '/user/login', commit, payload)

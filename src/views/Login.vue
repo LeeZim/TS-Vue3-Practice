@@ -33,6 +33,7 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue'
 import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
 import ValidInput, { RuleProps } from '../components/ValidInput.vue'
 import ValidForm from '../components/ValidForm.vue'
 
@@ -46,6 +47,7 @@ interface LoginPayload {
 export default defineComponent({
   name: 'Login',
   setup() {
+    const router = useRouter()
     const store = useStore()
     const emailVal = ref<string>('')
     const pwdVal = ref<string>('')
@@ -59,7 +61,7 @@ export default defineComponent({
           }
         }
         store.dispatch('loginAndFetch', payload).then(() => {
-          console.log(store.state.user)
+          router.push('/')
         })
       }
     }

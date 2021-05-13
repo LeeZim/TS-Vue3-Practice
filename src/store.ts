@@ -40,13 +40,13 @@ export interface ColumnsProps {
 export interface GlobalStateProps {
   user: CurrentUserProps
   columns: ColumnsProps
-  token: string | null
+  token: string
 }
 
 const defaultState: GlobalStateProps = {
   user: { isLogin: false, nickName: '某某某某', _id: '' },
   columns: { pageSize: 3, currentPage: 1, list: [], isEnd: false },
-  token: ''
+  token: localStorage.getItem('token') || ''
 }
 
 const store = createStore({
@@ -56,21 +56,22 @@ const store = createStore({
   mutations: {
     userLogin(state: GlobalStateProps, rawData) {
       const { token } = rawData.data
-      console.log(token)
       if (token) {
         localStorage.setItem('token', token)
-        state.token = localStorage.getItem('token')
+        state.token = localStorage.getItem('token') as string
         axios.defaults.headers.common.Authorization = `Bearer ${token}`
       }
+    },
+    userLogout(state: GlobalStateProps) {
+      delete axios.defaults.headers.common.Authorization
+      localStorage.removeItem('token')
+      state.user.isLogin = false
     },
     fetchCurrentUser(state: GlobalStateProps, rawData) {
       const { data } = rawData
       if (data) {
         state.user = { ...data, isLogin: true }
       }
-    },
-    userLogout(state: GlobalStateProps) {
-      state.user.isLogin = false
     },
     getColumns(state: GlobalStateProps, rawData) {
       const { data } = rawData

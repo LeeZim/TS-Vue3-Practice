@@ -7,10 +7,10 @@
     </ul>
     <ul v-else class="list-inline mb-0">
       <li class="list-inline-item">
-        <DropdownList :user="userInfo">
+        <DropdownList :user="user">
           <DropdownItem>新建文章</DropdownItem>
           <DropdownItem :disabled="true">我的专栏</DropdownItem>
-          <DropdownItem>退出登录</DropdownItem>
+          <DropdownItem @click.prevent="userLogout">退出登录</DropdownItem>
         </DropdownList>
       </li>
     </ul>
@@ -18,15 +18,21 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent } from 'vue'
+import { computed, defineComponent, PropType } from 'vue'
 import { useRouter } from 'vue-router'
-import { useStore } from 'vuex'
+import { Computed, useStore } from 'vuex'
 import { CurrentUserProps, GlobalStateProps } from '../store'
 import DropdownList from './DropdownList.vue'
 import DropdownItem from './DropdownItem.vue'
 
 export default defineComponent({
   name: 'Header',
+  props: {
+    user: {
+      type: Object as PropType<Computed>,
+      required: true
+    }
+  },
   components: {
     DropdownList,
     DropdownItem
@@ -38,9 +44,14 @@ export default defineComponent({
     const userLogin = () => {
       router.push('/login')
     }
+    const userLogout = () => {
+      store.commit('userLogout')
+      router.push('/')
+    }
     return {
       userInfo,
-      userLogin
+      userLogin,
+      userLogout
     }
   }
 })

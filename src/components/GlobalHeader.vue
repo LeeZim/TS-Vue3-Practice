@@ -7,7 +7,7 @@
     </ul>
     <ul v-else class="list-inline mb-0">
       <li class="list-inline-item">
-        <a class="btn btn-outline-light" @click="userLogout">欢迎 {{ user.nickName }}</a>
+        <DropdownList :user="user"></DropdownList>
       </li>
     </ul>
   </nav>
@@ -18,6 +18,7 @@ import { computed, defineComponent, PropType } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { CurrentUserProps, GlobalStateProps } from '../store'
+import DropdownList from './DropdownList.vue'
 
 export default defineComponent({
   name: 'Header',
@@ -26,6 +27,9 @@ export default defineComponent({
       type: Object as PropType<CurrentUserProps>,
       required: true
     }
+  },
+  components: {
+    DropdownList
   },
   setup() {
     const router = useRouter()

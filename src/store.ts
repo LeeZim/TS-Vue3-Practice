@@ -35,7 +35,7 @@ export interface GlobalStateProps {
 }
 
 const defaultState: GlobalStateProps = {
-  user: { isLogin: false, nickName: '某某某' },
+  user: { isLogin: true, nickName: '某某某某' },
   columns: { pageSize: 3, currentPage: 1, list: [], isEnd: false }
 }
 

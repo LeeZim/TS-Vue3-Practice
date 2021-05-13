@@ -40,6 +40,7 @@ export default defineComponent({
     ]
     const commitTest = (isValid: boolean) => {
       console.log(isValid)
+      store.commit('userLogin')
     }
 
     const pwdValidRule: RuleProps[] = [

@@ -25,13 +25,11 @@ export default defineComponent({
   setup(props, context) {
     let funcArr: funcArrProps[] = []
     const onFormCommit = () => {
-      // console.log(funcArr)
       const isValid = funcArr.map((func) => func()).every((result) => result)
       context.emit('formCommit', isValid)
     }
     const callback = (func: funcArrProps) => {
       funcArr.push(func)
-      console.log(funcArr)
     }
     emitter.on('form-item-created', callback)
     onUnmounted(() => {

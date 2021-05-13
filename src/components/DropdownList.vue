@@ -5,9 +5,7 @@
     </button>
   </div>
   <ul class="dropdown-menu" style="display: block" v-if="isOpen">
-    <li><a class="dropdown-item" href="#">Action</a></li>
-    <li><a class="dropdown-item" href="#">Another</a></li>
-    <li><a class="dropdown-item" href="#">Something</a></li>
+    <slot></slot>
   </ul>
 </template>
 <script lang="ts">

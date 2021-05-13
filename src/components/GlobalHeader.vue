@@ -7,7 +7,11 @@
     </ul>
     <ul v-else class="list-inline mb-0">
       <li class="list-inline-item">
-        <DropdownList :user="user"></DropdownList>
+        <DropdownList :user="user">
+          <DropdownItem>新建文章</DropdownItem>
+          <DropdownItem :disabled="true">我的专栏</DropdownItem>
+          <DropdownItem>退出登录</DropdownItem>
+        </DropdownList>
       </li>
     </ul>
   </nav>
@@ -19,6 +23,7 @@ import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { CurrentUserProps, GlobalStateProps } from '../store'
 import DropdownList from './DropdownList.vue'
+import DropdownItem from './DropdownItem.vue'
 
 export default defineComponent({
   name: 'Header',
@@ -29,7 +34,8 @@ export default defineComponent({
     }
   },
   components: {
-    DropdownList
+    DropdownList,
+    DropdownItem
   },
   setup() {
     const router = useRouter()

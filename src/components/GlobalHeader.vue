@@ -7,7 +7,7 @@
     </ul>
     <ul v-else class="list-inline mb-0">
       <li class="list-inline-item">
-        <DropdownList :user="user">
+        <DropdownList :user="userInfo">
           <DropdownItem>新建文章</DropdownItem>
           <DropdownItem :disabled="true">我的专栏</DropdownItem>
           <DropdownItem>退出登录</DropdownItem>
@@ -18,7 +18,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, PropType } from 'vue'
+import { computed, defineComponent } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { CurrentUserProps, GlobalStateProps } from '../store'
@@ -27,12 +27,6 @@ import DropdownItem from './DropdownItem.vue'
 
 export default defineComponent({
   name: 'Header',
-  props: {
-    user: {
-      type: Object as PropType<CurrentUserProps>,
-      required: true
-    }
-  },
   components: {
     DropdownList,
     DropdownItem

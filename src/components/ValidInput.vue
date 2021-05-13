@@ -104,7 +104,6 @@ export default defineComponent({
       return true
     }
     onMounted(() => {
-      console.log('itemCreate')
       emitter.emit('form-item-created', loseFocus)
     })
     return {

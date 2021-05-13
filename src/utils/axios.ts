@@ -9,11 +9,14 @@ const axios = Axios.create({
 
 axios.interceptors.request.use(
   (config) => {
-    if (config.method === 'get') {
-      config.params = {
-        ...config.params,
-        icode: '0370D0ADAC459408'
+    if (config.method === 'post') {
+      if (config.data instanceof FormData) {
+        config.data.append('icode', '0370D0ADAC459408')
+      } else {
+        config.data = { ...config.data, icode: '0370D0ADAC459408' }
       }
+    } else {
+      config.params = { ...config.params, icode: '0370D0ADAC459408' }
     }
     return config
   },

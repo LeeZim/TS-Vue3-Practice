@@ -13,9 +13,7 @@ export default defineComponent({
       default: false
     }
   },
-  setup(props) {
-    console.log(props.disabled)
-  }
+  setup() {}
 })
 </script>
 

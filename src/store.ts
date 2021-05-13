@@ -67,6 +67,7 @@ const store = createStore({
     userLogout(state: GlobalStateProps) {
       delete axios.defaults.headers.common.Authorization
       localStorage.removeItem('token')
+      state.token = ''
       state.user.isLogin = false
     },
     fetchCurrentUser(state: GlobalStateProps, rawData) {

@@ -1,19 +1,29 @@
 <template>
-  <div
-    class="loading-container d-flex justify-content-center align-items-center h-100 w-100"
-    :style="{ backgroundColor: background || '' }"
-  >
-    <div class="spinner-border text-primary" role="status"></div>
-  </div>
+  <teleport to="#loading">
+    <div
+      class="loading-container d-flex justify-content-center align-items-center h-100 w-100"
+      :style="{ backgroundColor: background || '' }"
+    >
+      <div class="spinner-border text-primary" role="status"></div>
+    </div>
+  </teleport>
 </template>
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, onUnmounted } from 'vue'
 
 export default defineComponent({
   props: {
     background: String
   },
-  setup() {}
+  setup() {
+    const div = document.createElement('div')
+    div.id = 'loading'
+    document.body.appendChild(div)
+
+    onUnmounted(() => {
+      document.body.removeChild(div)
+    })
+  }
 })
 </script>
 

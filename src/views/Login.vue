@@ -36,6 +36,7 @@ import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import ValidInput, { RuleProps } from '../components/ValidInput.vue'
 import ValidForm from '../components/ValidForm.vue'
+import createMessage from '../utils/createMessage'
 
 interface LoginPayload {
   method: 'get' | 'post'
@@ -61,7 +62,10 @@ export default defineComponent({
           }
         }
         store.dispatch('loginAndFetch', payload).then(() => {
-          router.push('/')
+          createMessage('登陆成功', 'success')
+          setTimeout(() => {
+            router.push('/')
+          }, 2500)
         })
       }
     }

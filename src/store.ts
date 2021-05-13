@@ -41,12 +41,14 @@ export interface GlobalStateProps {
   user: CurrentUserProps
   columns: ColumnsProps
   token: string
+  isLoading: boolean
 }
 
 const defaultState: GlobalStateProps = {
   user: { isLogin: false, nickName: '某某某某', _id: '' },
   columns: { pageSize: 3, currentPage: 1, list: [], isEnd: false },
-  token: localStorage.getItem('token') || ''
+  token: localStorage.getItem('token') || '',
+  isLoading: false
 }
 
 const store = createStore({
@@ -86,6 +88,9 @@ const store = createStore({
     },
     getMoreColumns(state: GlobalStateProps) {
       state.columns.currentPage += 1
+    },
+    setLoader(state: GlobalStateProps, status: boolean) {
+      state.isLoading = status
     }
   },
   actions: {

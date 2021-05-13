@@ -1,6 +1,7 @@
 <template>
   <div class="container">
     <Header :user="userInfo" />
+    <Loader v-if="isLoading" />
     <router-view></router-view>
     <Footer />
   </div>
@@ -12,16 +13,19 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import Header from '@/components/GlobalHeader.vue'
 import Footer from '@/components/GlobalFooter.vue'
 import { useStore } from 'vuex'
+import Loader from '@/components/Loader.vue'
 import { CurrentUserProps, GlobalStateProps } from './store'
 
 export default defineComponent({
   name: 'App',
-  components: { Header, Footer },
+  components: { Header, Footer, Loader },
   setup() {
     const store = useStore<GlobalStateProps>()
     const userInfo = computed<CurrentUserProps>(() => store.state.user)
+    const isLoading = computed(() => store.state.isLoading)
     return {
-      userInfo
+      userInfo,
+      isLoading
     }
   }
 })

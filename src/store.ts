@@ -60,6 +60,12 @@ export interface ListProps<P> {
   [key: string]: P
 }
 
+export interface RawData<U> {
+  code: number
+  msg: string
+  data: U
+}
+
 export interface GlobalStateProps {
   user: CurrentUserProps
   columns: DataProps<ListProps<ColumnProps>>
@@ -101,10 +107,16 @@ const store = createStore({
         state.user = { ...data, isLogin: true }
       }
     },
-    fetchColumns(state: GlobalStateProps, rawData) {
-      const data = rawData.data as DataProps<ColumnProps[]>
+    fetchColumns(state: GlobalStateProps, rawData: RawData<DataProps<ColumnProps[]>>) {
+      const { data } = rawData
       const list = { ...state.columns.list, ...arrToObj(data.list) }
       state.columns = { ...data, list }
+    },
+    fetchColumn(state: GlobalStateProps, rawData: RawData<ColumnProps>) {
+      const { data } = rawData
+      const list: ListProps<ColumnProps> = {}
+      list[data._id] = data
+      state.columns.list = { ...state.columns.list, ...list }
     },
     setLoader(state: GlobalStateProps, status: boolean) {
       state.isLoading = status
@@ -119,6 +131,12 @@ const store = createStore({
           `/columns?currentPage=${currentPage}&pageSize=${pageSize}`,
           commit
         )
+      }
+      return Promise.resolve()
+    },
+    fetchColumn({ state, commit }, cid: string) {
+      if (!state.columns.list[cid]) {
+        return asyncAndCommit('fetchColumn', `/columns/${cid}`, commit)
       }
       return Promise.resolve()
     },

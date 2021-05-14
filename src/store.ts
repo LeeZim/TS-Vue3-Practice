@@ -54,6 +54,7 @@ export interface DataProps<T> {
   pageSize?: number
   currentPage: number
   list: T
+  cid?: string
 }
 
 export interface ListProps<P> {
@@ -77,7 +78,7 @@ export interface GlobalStateProps {
 const defaultState: GlobalStateProps = {
   user: { isLogin: false, nickName: '某某某某', _id: '' },
   columns: { count: 0, currentPage: 0, list: {} },
-  posts: { count: 0, pageSize: 5, currentPage: 1, list: {} },
+  posts: { count: 0, currentPage: 0, list: {} },
   token: localStorage.getItem('token') || '',
   isLoading: false
 }
@@ -107,6 +108,9 @@ const store = createStore({
         state.user = { ...data, isLogin: true }
       }
     },
+    setLoader(state: GlobalStateProps, status: boolean) {
+      state.isLoading = status
+    },
     fetchColumns(state: GlobalStateProps, rawData: RawData<DataProps<ColumnProps[]>>) {
       const { data } = rawData
       const list = { ...state.columns.list, ...arrToObj(data.list) }
@@ -118,8 +122,20 @@ const store = createStore({
       list[data._id] = data
       state.columns.list = { ...state.columns.list, ...list }
     },
-    setLoader(state: GlobalStateProps, status: boolean) {
-      state.isLoading = status
+    fetchPosts(
+      state: GlobalStateProps,
+      rawData: { data: RawData<DataProps<PostProps[]>>; extraData: any }
+    ) {
+      const { data, extraData } = rawData
+      const cid = extraData || state.posts.cid
+      const list = { ...arrToObj(data.data.list) }
+      state.posts = { ...data.data, cid, list }
+    },
+    fetchPost(state: GlobalStateProps, rawData: RawData<PostProps>) {
+      const { data } = rawData
+      const list: ListProps<PostProps> = {}
+      list[data._id] = data
+      state.posts.list = { ...state.posts.list, ...list }
     }
   },
   actions: {
@@ -137,6 +153,29 @@ const store = createStore({
     fetchColumn({ state, commit }, cid: string) {
       if (!state.columns.list[cid]) {
         return asyncAndCommit('fetchColumn', `/columns/${cid}`, commit)
+      }
+      return Promise.resolve()
+    },
+    fetchPosts(
+      { state, commit },
+      cid: string,
+      params: paramsProps = { currentPage: 1, pageSize: 5 }
+    ) {
+      const { currentPage, pageSize } = params
+      if (cid !== state.posts.cid || state.columns.currentPage < currentPage) {
+        return asyncAndCommit(
+          'fetchPosts',
+          `/columns/${cid}/posts?currentPage=${currentPage}&pageSize=${pageSize}`,
+          commit,
+          { method: 'get' },
+          cid
+        )
+      }
+      return Promise.resolve()
+    },
+    fetchPost({ state, commit }, pid: string) {
+      if (!state.posts.list[pid]) {
+        return asyncAndCommit('fetchPost', `/posts/${pid}`, commit)
       }
       return Promise.resolve()
     },
@@ -158,6 +197,12 @@ const store = createStore({
     },
     getColumnById: (state: GlobalStateProps) => (cid: string) => {
       return state.columns.list[cid]
+    },
+    getPosts: (state: GlobalStateProps) => () => {
+      return objToArr(state.posts.list)
+    },
+    getPostById: (state: GlobalStateProps) => (pid: string) => {
+      return state.posts.list[pid]
     }
   }
 })

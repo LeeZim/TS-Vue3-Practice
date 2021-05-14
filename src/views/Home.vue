@@ -15,9 +15,9 @@
     <ColumnList />
     <div class="d-grid col-6 mx-auto">
       <button
-        v-if="!isEnd"
+        v-if="!isLastPage"
         class="btn btn-outline-primary mt-2 mb-5 mx-auto w-25"
-        @click="getMoreColumns"
+        @click="useMoreData"
       >
         点击加载更多
       </button>
@@ -30,19 +30,21 @@ import { computed, defineComponent } from 'vue'
 import ColumnList from '@/components/ColumnList.vue'
 import { useStore } from 'vuex'
 import { GlobalStateProps } from '../store'
+import getMoreData from '../utils/getMoreData'
 
 export default defineComponent({
   name: 'Home',
   setup() {
     const store = useStore<GlobalStateProps>()
-    const isEnd = computed(() => store.state.columns.isEnd)
-    const getMoreColumns = () => {
-      store.commit('getMoreColumns')
-      store.dispatch('fetchColumns')
-    }
+    const count = computed<number>(() => store.state.columns.count)
+    const currentPage = computed(() => store.state.columns.currentPage)
+    const { isLastPage, useMoreData } = getMoreData('fetchColumns', count, {
+      currentPage: currentPage.value ? currentPage.value + 1 : 2,
+      pageSize: 3
+    })
     return {
-      getMoreColumns,
-      isEnd
+      useMoreData,
+      isLastPage
     }
   },
   components: {

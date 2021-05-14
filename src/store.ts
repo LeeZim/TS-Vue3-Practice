@@ -2,6 +2,8 @@ import { createStore } from 'vuex'
 import { AxiosRequestConfig } from 'axios'
 import asyncAndCommit from './utils/asyncAndCommit'
 import axios from './utils/axios'
+import { objToArr, arrToObj } from './helper'
+import { paramsProps } from './utils/getMoreData'
 
 export interface CurrentUserProps {
   _id: string
@@ -29,25 +31,47 @@ export interface ColumnProps {
   createdAt?: string
 }
 
-export interface ColumnsProps {
-  count?: number
-  pageSize: number
+export interface PostAuthorProps {
+  _id: string
+  email?: string
+  nickName?: string
+  description?: string
+  avatar?: string
+  column?: string
+  createdAt?: string
+}
+export interface PostProps {
+  _id: string
+  title?: string
+  excerpt?: string
+  content?: string
+  image?: AvatarProps
+  author?: PostAuthorProps
+}
+
+export interface DataProps<T> {
+  count: number
+  pageSize?: number
   currentPage: number
-  list: ColumnProps[]
-  isEnd: boolean
-  loadedPage: number
+  list: T
+}
+
+export interface ListProps<P> {
+  [key: string]: P
 }
 
 export interface GlobalStateProps {
   user: CurrentUserProps
-  columns: ColumnsProps
+  columns: DataProps<ListProps<ColumnProps>>
+  posts: DataProps<ListProps<PostProps>>
   token: string
   isLoading: boolean
 }
 
 const defaultState: GlobalStateProps = {
   user: { isLogin: false, nickName: '某某某某', _id: '' },
-  columns: { pageSize: 3, currentPage: 1, list: [], isEnd: false, loadedPage: 0 },
+  columns: { count: 0, currentPage: 0, list: {} },
+  posts: { count: 0, pageSize: 5, currentPage: 1, list: {} },
   token: localStorage.getItem('token') || '',
   isLoading: false
 }
@@ -77,34 +101,22 @@ const store = createStore({
         state.user = { ...data, isLogin: true }
       }
     },
-    getColumns(state: GlobalStateProps, rawData) {
-      const { data } = rawData
-      if (!state.columns.list) {
-        state.columns.list = data.list
-      } else {
-        state.columns.list = state.columns.list.concat(data.list)
-        if (data.count && state.columns.list.length >= data.count) {
-          state.columns.isEnd = true
-        }
-      }
-    },
-    getMoreColumns(state: GlobalStateProps) {
-      state.columns.currentPage += 1
-    },
-    setLoadedPage(state: GlobalStateProps, loadedPage: number) {
-      state.columns.loadedPage = loadedPage
+    fetchColumns(state: GlobalStateProps, rawData) {
+      const data = rawData.data as DataProps<ColumnProps[]>
+      const list = { ...state.columns.list, ...arrToObj(data.list) }
+      state.columns = { ...data, list }
     },
     setLoader(state: GlobalStateProps, status: boolean) {
       state.isLoading = status
     }
   },
   actions: {
-    fetchColumns({ state, commit }) {
-      if (state.columns.currentPage > state.columns.loadedPage) {
-        commit('setLoadedPage', state.columns.currentPage)
+    fetchColumns({ state, commit }, params: paramsProps = { currentPage: 1, pageSize: 3 }) {
+      const { currentPage, pageSize } = params
+      if (state.columns.currentPage < currentPage) {
         return asyncAndCommit(
-          'getColumns',
-          `/columns?currentPage=${state.columns.currentPage}&pageSize=${state.columns.pageSize}`,
+          'fetchColumns',
+          `/columns?currentPage=${currentPage}&pageSize=${pageSize}`,
           commit
         )
       }
@@ -122,7 +134,14 @@ const store = createStore({
       })
     }
   },
-  getters: {}
+  getters: {
+    getColumns: (state: GlobalStateProps) => () => {
+      return objToArr(state.columns.list)
+    },
+    getColumnById: (state: GlobalStateProps) => (cid: string) => {
+      return state.columns.list[cid]
+    }
+  }
 })
 
 export default store

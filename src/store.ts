@@ -16,6 +16,14 @@ export interface CurrentUserProps {
   isLogin: boolean
 }
 
+export interface ImageProps {
+  createdAt: string
+  extname: string
+  filename: string
+  url: string
+  _id: string
+}
+
 export interface AvatarProps {
   _id: string
   url?: string

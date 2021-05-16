@@ -1,6 +1,7 @@
 <template>
   <div class="container">
     <Header :user="userInfo" />
+    <Uploader :beforeUploaded="beforeUploaded" :fileUploaded="fileUploaded" />
     <Loader v-if="isLoading" />
     <router-view></router-view>
     <Footer />
@@ -14,18 +15,22 @@ import Header from '@/components/GlobalHeader.vue'
 import Footer from '@/components/GlobalFooter.vue'
 import { useStore } from 'vuex'
 import Loader from '@/components/Loader.vue'
+import Uploader from '@/components/Uploader.vue'
 import { CurrentUserProps, GlobalStateProps } from './store'
+import { beforeUploaded, fileUploaded } from './utils/uploader'
 
 export default defineComponent({
   name: 'App',
-  components: { Header, Footer, Loader },
+  components: { Header, Footer, Loader, Uploader },
   setup() {
     const store = useStore<GlobalStateProps>()
     const userInfo = computed<CurrentUserProps>(() => store.state.user)
     const isLoading = computed(() => store.state.isLoading)
     return {
       userInfo,
-      isLoading
+      isLoading,
+      beforeUploaded,
+      fileUploaded
     }
   }
 })

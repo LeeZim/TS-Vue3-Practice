@@ -47,6 +47,8 @@ export interface PostProps {
   content?: string
   image?: AvatarProps
   author?: PostAuthorProps
+  column?: string
+  createAt?: string
 }
 
 export interface DataProps<T> {
@@ -174,7 +176,7 @@ const store = createStore({
       return Promise.resolve()
     },
     fetchPost({ state, commit }, pid: string) {
-      if (!state.posts.list[pid]) {
+      if (!state.posts.list[pid] || !state.posts.list[pid].content) {
         return asyncAndCommit('fetchPost', `/posts/${pid}`, commit)
       }
       return Promise.resolve()

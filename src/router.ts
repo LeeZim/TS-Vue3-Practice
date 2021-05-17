@@ -4,6 +4,7 @@ import Home from '@/views/Home.vue'
 import Login from '@/views/Login.vue'
 import ColumnDetail from '@/views/ColumnDetail.vue'
 import PostDetail from '@/views/PostDetail.vue'
+import CreatePost from '@/views/CreatePost.vue'
 import store from './store'
 import axios from './utils/axios'
 
@@ -30,6 +31,14 @@ const routes: Array<RouteRecordRaw> = [
     path: '/posts/:id',
     name: 'PostDetail',
     component: PostDetail
+  },
+  {
+    path: '/create',
+    name: 'CreatePost',
+    component: CreatePost,
+    meta: {
+      isRequireLogin: true
+    }
   }
 ]
 

@@ -1,5 +1,5 @@
 <template>
-  <div class="col-md-10 mx-auto">
+  <div class="col-md-10 mx-auto w-100 mt-3">
     <label v-if="label" class="form-label">{{ label }}</label>
     <input
       v-if="tag === 'text'"

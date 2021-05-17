@@ -8,7 +8,7 @@
     <ul v-else class="list-inline mb-0">
       <li class="list-inline-item">
         <DropdownList :user="user">
-          <DropdownItem>新建文章</DropdownItem>
+          <DropdownItem><router-link to="/create">新建文章</router-link></DropdownItem>
           <DropdownItem :disabled="true">我的专栏</DropdownItem>
           <DropdownItem @click.prevent="userLogout">退出登录</DropdownItem>
         </DropdownList>

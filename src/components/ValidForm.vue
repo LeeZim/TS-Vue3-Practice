@@ -1,15 +1,11 @@
 <template>
   <div>
     <slot></slot>
-    <slot name="defaultBtn">
-      <button
-        class="btn btn-outline-primary w-50 mx-auto"
-        style="height: 40px"
-        @click="onFormCommit"
-      >
-        确定提交
-      </button>
-    </slot>
+    <div class="mx-auto w-100 text-center mb-3" @click="onFormCommit">
+      <slot name="defaultBtn">
+        <button class="btn btn-outline-primary w-50 mx-auto">确定提交</button>
+      </slot>
+    </div>
   </div>
 </template>
 <script lang="ts">
